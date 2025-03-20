@@ -8,6 +8,10 @@ function App() {
 
   return (
     <>
+    <div className="bg-blue-500 text-white text-2xl p-4">
+  ¡Tailwind está funcionando! 🎨
+</div>
+
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
@@ -29,7 +33,10 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
+    
   )
+
+  
 }
 
 export default App
