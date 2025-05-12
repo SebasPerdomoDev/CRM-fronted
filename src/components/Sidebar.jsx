@@ -3,11 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom"; // Importa us
 import { MdMenuOpen } from "react-icons/md";
 import { FaUserTie, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
+import { BsCalendarEvent } from "react-icons/bs";
 
 const menuItems = [
   { path: "/dashboard", icon: <GoHomeFill size={26} />, label: "Inicio" },
+  { path: "/empleados", icon: < FaUserTie size={26} />, label: "Empleados" },
   { path: "/clientes", icon: <FaUser size={26} />, label: "Clientes" },
-  { path: "/eventos", icon: <FaUserTie size={26} />, label: "Eventos" },
+  { path: "/eventos", icon: <BsCalendarEvent size={26} />, label: "Eventos" },
 ];
 
 export default function Sidebar() {
@@ -56,7 +58,7 @@ export default function Sidebar() {
               className={`flex items-center gap-4 px-4 py-3 rounded-l-full transition-all duration-300 ${
                 location.pathname === item.path
                   ? "bg-[#f3f4ff] text-main-blue font-semibold shadow-md pl-6"
-                  : "hover:bg-blue-600"
+                  : "hover:bg-hover-blue"
               }`}
             >
               <div className="flex-shrink-0">{item.icon}</div>
