@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom"; // Importa useNavigate
 import { MdMenuOpen } from "react-icons/md";
-import { FaUserGraduate, FaUserTie, FaSignOutAlt } from "react-icons/fa";
+import { FaUserTie, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { GoHomeFill } from "react-icons/go";
 
 const menuItems = [
   { path: "/dashboard", icon: <GoHomeFill size={26} />, label: "Inicio" },
-  { path: "/clientes", icon: <FaUserGraduate size={26} />, label: "Clientes" },
+  { path: "/clientes", icon: <FaUser size={26} />, label: "Clientes" },
   { path: "/eventos", icon: <FaUserTie size={26} />, label: "Eventos" },
 ];
 
