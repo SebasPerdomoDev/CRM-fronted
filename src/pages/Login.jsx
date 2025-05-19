@@ -82,15 +82,7 @@ const Login = () => {
             Iniciar Sesión
           </button>
 
-          {/* Crear cuenta */}
-          <div className="text-center mt-6">
-            <Link
-              to="/register"
-              className="hover:text-gray-300 cursor-pointer text-white font-semibold"
-            >
-              Crea tu cuenta ya!
-            </Link>
-          </div>
+          
         </form>
       </div>
     </div>

@@ -1,48 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { FaEllipsisV, FaUserTie } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
 import HeaderPage from "../components/HeaderPage";
-
-const initialEmpleados = [
-  {
-    id: 1,
-    cc: "1001234567",
-    nombre: "Laura Martínez",
-    ciudad: "Bogotá",
-    telefono: "3001112233",
-    email: "laura.martinez@email.com",
-  },
-  {
-    id: 2,
-    cc: "1009876543",
-    nombre: "Pedro Gómez",
-    ciudad: "Medellín",
-    telefono: "3102223344",
-    email: "pedro.gomez@email.com",
-  },
-  {
-    id: 3,
-    cc: "1005556667",
-    nombre: "Sofía Torres",
-    ciudad: "Cali",
-    telefono: "3123334455",
-    email: "sofia.torres@email.com",
-  },
-  {
-    id: 4,
-    cc: "1008889990",
-    nombre: "Carlos Ruiz",
-    ciudad: "Barranquilla",
-    telefono: "3154445566",
-    email: "carlos.ruiz@email.com",
-  },
-  // Puedes agregar más empleados aquí
-];
+import axios from "axios";
 
 const Empleados = () => {
-  const [empleados, setEmpleados] = useState(initialEmpleados);
+  const [empleados, setEmpleados] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editEmpleado, setEditEmpleado] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [nuevoEmpleado, setNuevoEmpleado] = useState({
+    cc: "",
+    nombre: "",
+    ciudad: "",
+    telefono: "",
+    email: "",
+  });
+
+  // Cargar empleados desde la base de datos al iniciar
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/empleados")
+      .then((res) => setEmpleados(res.data))
+      .catch((err) => console.error("Error al cargar empleados:", err));
+  }, []);
 
   const handleMenuToggle = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
@@ -71,9 +52,42 @@ const Empleados = () => {
     setOpenMenuId(null);
   };
 
+  const handleNuevoChange = (e) => {
+    setNuevoEmpleado({
+      ...nuevoEmpleado,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleCrearEmpleado = async (e) => {
+    e.preventDefault();
+    if (
+      !nuevoEmpleado.cc ||
+      !nuevoEmpleado.nombre ||
+      !nuevoEmpleado.ciudad ||
+      !nuevoEmpleado.telefono ||
+      !nuevoEmpleado.email
+    )
+      return;
+
+    try {
+      const res = await axios.post("http://localhost:3000/empleados", nuevoEmpleado);
+      setEmpleados([...empleados, res.data]);
+      setNuevoEmpleado({
+        cc: "",
+        nombre: "",
+        ciudad: "",
+        telefono: "",
+        email: "",
+      });
+      setShowModal(false);
+    } catch (err) {
+      console.error("Error al crear el empleado:", err);
+    }
+  };
+
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
       <Sidebar />
 
       <main className="flex-1 p-6">
@@ -81,7 +95,16 @@ const Empleados = () => {
 
         {/* Tabla de Empleados */}
         <div className="mt-10 bg-white rounded-2xl p-6 shadow">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Lista de Empleados</h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800">Lista de Empleados</h2>
+            <button
+              className="bg-main-blue text-white px-4 py-2 rounded font-bold hover:bg-hover-blue transition"
+              onClick={() => setShowModal(true)}
+              type="button"
+            >
+              Crear Empleado
+            </button>
+          </div>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-main-blue text-white">
@@ -92,7 +115,7 @@ const Empleados = () => {
                   <th className="px-4 py-2 text-left text-xs font-medium uppercase">Ciudad</th>
                   <th className="px-4 py-2 text-left text-xs font-medium uppercase">Teléfono</th>
                   <th className="px-4 py-2 text-left text-xs font-medium uppercase">Correo</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase">Acciones</th>
+                  <th className="px-4 py-2 text-left text-xs font-medium uppercase"></th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -139,6 +162,84 @@ const Empleados = () => {
             </table>
           </div>
         </div>
+
+        {/* Modal Crear Empleado */}
+        {showModal && (
+          <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm z-50">
+            <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md relative">
+              <button
+                className="absolute top-2 right-4 text-gray-500 text-2xl font-bold cursor-pointer"
+                onClick={() => setShowModal(false)}
+              >
+                &times;
+              </button>
+              <h3 className="text-xl font-bold ">Crear Nuevo Empleado</h3>
+              <form onSubmit={handleCrearEmpleado} className="space-y-4">
+                <div>
+                  <label className="block font-bold mb-1">C.C</label>
+                  <input
+                    type="text"
+                    name="cc"
+                    value={nuevoEmpleado.cc}
+                    onChange={handleNuevoChange}
+                    className="w-full border rounded px-3 py-2"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold mb-1">Nombre completo</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={nuevoEmpleado.nombre}
+                    onChange={handleNuevoChange}
+                    className="w-full border rounded px-3 py-2"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold mb-1">Ciudad</label>
+                  <input
+                    type="text"
+                    name="ciudad"
+                    value={nuevoEmpleado.ciudad}
+                    onChange={handleNuevoChange}
+                    className="w-full border rounded px-3 py-2"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold mb-1">Teléfono</label>
+                  <input
+                    type="text"
+                    name="telefono"
+                    value={nuevoEmpleado.telefono}
+                    onChange={handleNuevoChange}
+                    className="w-full border rounded px-3 py-2"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold mb-1">Correo</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={nuevoEmpleado.email}
+                    onChange={handleNuevoChange}
+                    className="w-full border rounded px-3 py-2"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-main-blue text-white px-4 py-2 rounded font-bold hover:bg-hover-blue transition w-full cursor-pointer"
+                >
+                  Crear
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Modal de Actualización */}
         {editEmpleado && (
